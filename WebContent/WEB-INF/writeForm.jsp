@@ -23,7 +23,7 @@
 	</form>
 	<br>
 	<br>
-	<a href="/phonebook2/pbc?action=list">리스트 바로가기</a>
+	<a href="/phonebook2/pbc">리스트 바로가기</a> <!-- 리스트를 기본으로 출력했으니 href 주소값 바꿔주기 -->
 
 </body>
 </html>

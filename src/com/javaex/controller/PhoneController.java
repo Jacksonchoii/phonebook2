@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.javaex.dao.PhoneDao;
+import com.javaex.util.WebUtil;
 import com.javaex.vo.PersonVo;
 
 @WebServlet("/pbc") //http://localhost:8088/phonebook2/주소
@@ -25,27 +26,21 @@ public class PhoneController extends HttpServlet {
 		System.out.println(action);
 		
 		if("list".equals(action)) {
-			System.out.println("리스트 처리");
-			//리스트 출력 처리
-			PhoneDao phoneDao = new PhoneDao();
-			List<PersonVo> personList = phoneDao.getPersonList();
-			
-			//html을 쓰기 복잡하다 ---> jsp에 만든다
-			
-			//데이터 전달
-			request.setAttribute("pList", personList); //(내가정한별명, 실제 전송할 데이터(리스트))
 			
 			
-			//jsp에 포워드 시킨다.
-			RequestDispatcher rd = request.getRequestDispatcher("./WEB-INF/list.jsp"); //path에는 jsp파일 위치를 알려준다.
-			rd.forward(request, response);
+
 		
 		} else if("wform".equals(action)) {
 			System.out.println("등록 폼 처리");
 			
+			/*
 			//포워드 시키기
 			RequestDispatcher rd= request.getRequestDispatcher("./WEB-INF/writeForm.jsp");
 			rd.forward(request, response);
+			*/
+			
+			//WebUtil wu = new WebUtil(); --> static에 올려놓으면 이렇게 쓸 필요 없다
+			WebUtil.forword(request, response, "./WEB-INF/writeForm.jsp");
 			
 		} else if("insert".equals(action)) {
 			System.out.println("전화번호 저장");
@@ -62,7 +57,10 @@ public class PhoneController extends HttpServlet {
 			PhoneDao phoneDao = new PhoneDao();
 			phoneDao.personInsert(personVo);
 			
-			response.sendRedirect("/phonebook2/pbc?action=list"); //주소를 보내줘야한다
+			//response.sendRedirect("/phonebook2/pbc?action=list"); //주소를 보내줘야한다
+			
+			WebUtil.redirect(request, response, "/phonebook2/pbc?action=list");
+			
 			
 		}  else if("uform".equals(action)) {
 			System.out.println("수정 폼 처리");
@@ -106,6 +104,27 @@ public class PhoneController extends HttpServlet {
 			phoneDao.personDelete(personId);
 			
 			response.sendRedirect("/phonebook2/pbc?action=list");
+			
+		} else { //기본값을 리스트로 출력  -- 리스트를 기본으로 출력했으니 writeForm에서 href 주소값 바꿔주기
+			System.out.println("리스트 처리");
+			//리스트 출력 처리
+			PhoneDao phoneDao = new PhoneDao();
+			List<PersonVo> personList = phoneDao.getPersonList();
+			
+			//html을 쓰기 복잡하다 ---> jsp에 만든다
+			
+			//데이터 전달
+			request.setAttribute("pList", personList); //(내가정한별명, 실제 전송할 데이터(리스트))
+			
+			
+			//jsp에 포워드 시킨다.
+			/*
+			RequestDispatcher rd = request.getRequestDispatcher("./WEB-INF/list.jsp"); //path에는 jsp파일 위치를 알려준다.
+			rd.forward(request, response);
+			*/
+			
+			//String path = "./WEB-INF/list.jsp";
+			WebUtil.forword(request, response, "./WEB-INF/list.jsp");
 			
 		}
 		
